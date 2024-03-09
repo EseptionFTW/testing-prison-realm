@@ -1,0 +1,21 @@
+{
+  "item.prisonrealm.last_resort": "Last Resort",
+
+  "block.prisonrealm.sealed_prison_realm" : "Sealed Prison Realm",
+  "block.prisonrealm.prison_realm": "Prison Realm",
+  "block.prisonrealm.spent_prison_realm": "Prison Realm",
+  "block.prisonrealm.six_eyes_prison_realm": "Prison Realm",
+  "block.prisonrealm.prison_realm_back": "Back Of Prison Realm",
+
+  "tooltip.prisonrealm.last_resort.tooltip": "For Those Stuck In Limbo, To Take Their Own Lives",
+  "tooltip.prisonrealm.bound_prison_realm.tooltip": "Bound",
+
+  "effect.prisonrealm.sealing" : "Sealing",
+
+  "creativetab.prison_realm_tab": "Prison Realm",
+
+  "key.category.prisonrealm.prisonrealm": "Prison Realm",
+
+  "key.prisonrealm.open_close_prison_realm": "Open/Close Prison Realm"
+
+}

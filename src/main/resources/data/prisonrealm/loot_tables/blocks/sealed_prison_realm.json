@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "prisonrealm:sealed_prison_realm_item"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "prisonrealm:items/sealed_prison_realm_item"
+}
