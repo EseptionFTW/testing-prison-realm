@@ -232,7 +232,7 @@ public class OpenCloseGatePacket {
 
          */
         if (ModBlocks.SEALED_PRISON_REALM.get() instanceof SealedPrisonRealmBlock sealedBlock) {
-            blockPos = sealedBlock.blockPos;
+            blockPos = sealedBlock.getBlockPos();
         }
 
         //level.getBlockEntity(blockPos);

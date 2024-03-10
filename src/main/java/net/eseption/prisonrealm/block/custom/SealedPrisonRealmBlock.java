@@ -29,16 +29,16 @@ public class SealedPrisonRealmBlock extends BaseEntityBlock {
         super(pProperties);
     }
 
-    public BlockPos blockPos;
+    protected BlockPos blockPos;
 
-    public BlockPos getBlockPos(BlockPos blockPos) {
+    public BlockPos getBlockPos() {
         return blockPos;
     }
 
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState) {
-        getBlockPos(pPos);
+        getBlockPos();
         blockPos = pPos;
         return new SealedPrisonRealmBlockEntity(pPos,pState);
 
