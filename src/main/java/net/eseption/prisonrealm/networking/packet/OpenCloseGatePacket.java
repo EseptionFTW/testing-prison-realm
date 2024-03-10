@@ -5,10 +5,6 @@ import net.eseption.prisonrealm.block.custom.SealedPrisonRealmBlock;
 import net.eseption.prisonrealm.block.entity.ModBlockEntities;
 import net.eseption.prisonrealm.block.entity.SealedPrisonRealmBlockEntity;
 import net.eseption.prisonrealm.entity.ModEntities;
-import net.eseption.prisonrealm.entity.custom.PrisonRealmEntity;
-import net.eseption.prisonrealm.item.ModItems;
-import net.eseption.prisonrealm.item.custom.SealedPrisonRealmItem;
-import net.eseption.prisonrealm.util.ModTags;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -21,9 +17,9 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.network.NetworkEvent;
 
+import java.util.UUID;
 import java.util.function.Supplier;
 
 public class OpenCloseGatePacket {
@@ -45,41 +41,49 @@ public class OpenCloseGatePacket {
             // On Server
             ServerPlayer player = context.getSender();
             ServerLevel level = player.serverLevel();
+            UUID gateUUID = null;
 
-
-            if(isNearBoundPrisonRealm(player,level)){
+            if(isNearBoundPrisonRealm(player, level)){
                 //Destroy Sealed Prison Realm Block
 
-                gatePos(player ,level);
 
-                level.setBlock(sealPos(player, level),ModBlocks.PRISON_REALM.get().defaultBlockState(), 3);
+                //level.setBlock(gatePos(player, level),ModBlocks.PRISON_REALM.get().defaultBlockState(), 3);
 
-                //level.destroyBlock(gatePos(),false);
+                level.destroyBlock(gatePos(player, level),false);
 
                 //Summon Prison Realm Entity
 
-                // ModEntities.PRISON_REALM.get().spawn(level, gatePos(), MobSpawnType.COMMAND);
+
+                spawnPrisonRealmEntity(player, level);
+
+
+
+                gateUUID = ModEntities.PRISON_REALM.get().spawn(level, gatePos(player, level), MobSpawnType.TRIGGERED).getUUID();
+
+
                 //ModEntities.PRISON_REALM.get().spawn(level,player.blockPosition(),MobSpawnType.TRIGGERED);
 
                 //Send Realm Message In Chat
 
                 player.sendSystemMessage((Component.literal("Prison Realm : Gate Open").withStyle(ChatFormatting.DARK_RED)));
+                //player.sendSystemMessage((Component.literal(gatePos(player, level).toString()).withStyle(ChatFormatting.WHITE)));
 
                 //Play Prison Realm Opening Sound
 
-                level.playSound(null, player.blockPosition(), SoundEvents.WARDEN_SONIC_BOOM, SoundSource.BLOCKS);
-
+                level.playSound(null, gatePos(player, level), SoundEvents.WARDEN_SONIC_BOOM, SoundSource.BLOCKS);
 
                 //level.playSound(null, gatePos(player,level), SoundEvents.WARDEN_SONIC_BOOM, SoundSource.BLOCKS);
                 //level.playSound(null, gatePos(player,level), SoundEvents.WARDEN_HEARTBEAT, SoundSource.BLOCKS);
 
             }
-            else if(isNearBoundOpenPrisonRealm(player,level)) {
+            else if(isNearBoundOpenPrisonRealm(player, level)) {
                 //Place Prison Realm Block At Prison Realm Entity Location
 
-                //level.setBlock(gatePos(player,level),ModBlocks.PRISON_REALM.get().defaultBlockState(), 3);
+                level.setBlock(gatePos(player, level),ModBlocks.PRISON_REALM.get().defaultBlockState(), 3);
 
                 // De-summon Prison Realm Entity
+
+                level.getEntity(gateUUID).discard();
 
 
                 //   List<T>      level.getEntitiesOfClass(ModEntities.PRISON_REALM.get().getBaseClass(), player.getBoundingBox().inflate(8));
@@ -139,6 +143,16 @@ public class OpenCloseGatePacket {
         return true;
     }
 
+    private void spawnPrisonRealmEntity(ServerPlayer player, ServerLevel level) {
+
+        /*
+        UUID gateUUID = null;
+
+        gateUUID = ModEntities.PRISON_REALM.get().spawn(level, gatePos(player, level), MobSpawnType.TRIGGERED).getUUID();
+
+         */
+    }
+
     private boolean hasBoundPrisonRealm(ServerPlayer player, ServerLevel level) {
         return false;
     }
@@ -148,13 +162,30 @@ public class OpenCloseGatePacket {
     }
 
     private boolean isNearBoundOpenPrisonRealm(ServerPlayer player, ServerLevel level) {
+
+
+
+
         return false;
     }
 
     private boolean isNearBoundPrisonRealm(ServerPlayer player, ServerLevel level) {
+
+        CompoundTag pTag = new CompoundTag();
+        String idValue;
+
+        idValue = level.getBlockEntity(gatePos(player, level)).serializeNBT().getString("prisonrealm.block_uuid");
+
+        if (player.getStringUUID() == idValue) {
+            return true;
+        } else {
+            return false;
+        }
+
+        /*
         return level.getBlockStates(player.getBoundingBox().inflate(32))
                 .filter(state -> state.is(ModBlocks.SEALED_PRISON_REALM.get())).toArray().length > 0;
-
+         */
         //level.getBlockEntity()
 
         //SealedPrisonRealmBlockEntity.getPosFromTag()
@@ -175,6 +206,8 @@ public class OpenCloseGatePacket {
     //pPlayer.getItemInHand(pUsedHand).setTag(new CompoundTag());
 
     public BlockPos gatePos(ServerPlayer player, ServerLevel level) {
+        BlockPos blockPos = null;
+        /*
         level.getBlockStates(player.getBoundingBox().inflate(8))
                 .filter(state -> state.is(ModBlocks.SEALED_PRISON_REALM.get())).toList().get(0);
 
@@ -194,6 +227,21 @@ public class OpenCloseGatePacket {
                 .filter(state -> state.is(ModBlocks.SEALED_PRISON_REALM.get())).toList().get(0);
 
 
+        boolean a = ModBlockEntities.SEALED_PRISON_REALM_BLOCK_ENTITY.get() instanceof SealedPrisonRealmBlockEntity sealedBlockEntity;
+
+
+         */
+        if (ModBlocks.SEALED_PRISON_REALM.get() instanceof SealedPrisonRealmBlock sealedBlock) {
+            blockPos = sealedBlock.blockPos;
+        }
+
+        //level.getBlockEntity(blockPos);
+
+
+
+
+
+
         //      ModEntities.PRISON_REALM.get().getTags().filter()
 
         return blockPos;
@@ -202,7 +250,7 @@ public class OpenCloseGatePacket {
 
     public BlockPos sealPos(Player player, Level level) {
 
-        level.getEntities(ModEntities.PRISON_REALM_SEAL.get().create(level), player.getBoundingBox().inflate(8)).get(0).getOnPos().above();
+        //level.getEntities(ModEntities.PRISON_REALM_SEAL.get().create(level), player.getBoundingBox().inflate(8)).get(0).getOnPos().above();
 
         BlockPos blockPos = null;
         return blockPos;

@@ -2,8 +2,10 @@ package net.eseption.prisonrealm.block.custom;
 
 import net.eseption.prisonrealm.block.entity.SealedPrisonRealmBlockEntity;
 import net.eseption.prisonrealm.item.ModItems;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -27,10 +29,19 @@ public class SealedPrisonRealmBlock extends BaseEntityBlock {
         super(pProperties);
     }
 
+    public BlockPos blockPos;
+
+    public BlockPos getBlockPos(BlockPos blockPos) {
+        return blockPos;
+    }
+
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState) {
+        getBlockPos(pPos);
+        blockPos = pPos;
         return new SealedPrisonRealmBlockEntity(pPos,pState);
+
     }
     private static final VoxelShape SHAPE =
             Block.box(4, 0, 4, 12, 8, 12);
@@ -50,6 +61,7 @@ public class SealedPrisonRealmBlock extends BaseEntityBlock {
         if (pPlayer.isCrouching()) {
             if (pPlayer.getItemInHand(pHand) == ItemStack.EMPTY) {
                 pPlayer.setItemInHand(pHand, getBlockItem(pLevel, pPos, pPlayer));
+                pPlayer.sendSystemMessage((Component.literal(blockPos.toString()).withStyle(ChatFormatting.DARK_RED)));
             } else {
                 pPlayer.addItem(getBlockItem(pLevel, pPos, pPlayer));
             }
